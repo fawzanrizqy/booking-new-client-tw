@@ -2,12 +2,15 @@ import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ModalReject from "../components/ModalReject";
 const baseUrl = "http://localhost:3000";
 
 export const ListPage = () => {
   const [listBook, setListBook] = useState([]);
   const [listBookAll, setListBookAll] = useState([]);
   const [role, setRole] = useState("");
+  const [modalReject, setModalReject] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(0);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -53,6 +56,18 @@ export const ListPage = () => {
         text: `${error}`,
       });
     }
+  };
+
+  const closeModal = () => {
+    console.log("ini dijalankan");
+    fetchBookAll();
+    setModalReject(false);
+  };
+
+  const rejectBook = (id) => {
+    console.log("MASUK SINI");
+    setSelectedBook(id);
+    setModalReject(true);
   };
 
   const approveBook = async (id) => {
@@ -102,10 +117,15 @@ export const ListPage = () => {
     } else {
       setRole("user");
     }
-  }, []);
+  }, [modalReject]);
 
   return (
     <>
+      {modalReject ? (
+        <ModalReject id={selectedBook} close={closeModal} />
+      ) : (
+        <></>
+      )}
       <div className="px-4 sm:px-6 lg:px-8 mt-3">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
@@ -221,6 +241,7 @@ export const ListPage = () => {
                               <button
                                 type="button"
                                 className="rounded-full bg-red-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                                onClick={() => rejectBook(person.id)}
                               >
                                 Reject
                               </button>
