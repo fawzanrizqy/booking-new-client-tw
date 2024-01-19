@@ -1,44 +1,61 @@
 import { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import LogoCampus from "../assets/logoCampus.png"
+import AvatarUser from "../assets/avatar.svg"
 
 export const Navbar = () => {
   const [username, setUsername] = useState("");
+  const [role, setRole] = useState("")
 
+  // variables
+  const navigate = useNavigate()
+
+  // function
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("id");
+    localStorage.removeItem("role");
+    localStorage.removeItem("id_kampus");
+    localStorage.removeItem("name");
+
+    navigate("/login")
+  }
+
+  // use effect
   useEffect(() => {
-    setUsername(localStorage.getItem("id_kampus"));
+    setUsername(localStorage.getItem("name"));
+    setRole(localStorage.getItem("role"))
   }, []);
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-gray-900">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between">
+            <div className="flex h-20 items-center justify-between">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
+                  <NavLink to={"/"}>
+                    <img
+                      className="h-12 w-auto cursor-pointer"
+                      src={LogoCampus}
+                      alt="Campus Banner"
+                    />
+                  </NavLink>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
-                    {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                     <NavLink
                       to="/"
                       className={({ isActive, isPending }) =>
                         isPending
                           ? "pending"
                           : isActive
-                          ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                          : "px-3 py-2 text-sm font-medium text-white"
+                            ? "rounded-md bg-gray-500 px-3 py-2 text-sm font-medium text-white"
+                            : "px-3 py-2 text-sm font-medium text-white"
                       }
                     >
                       Dashboard
@@ -48,17 +65,19 @@ export const Navbar = () => {
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex items-center">
-                  {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
-                    <div>
+                    <div className="flex items-center gap-2">
                       <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-8 w-8 rounded-full"
-                          src="https://icon-library.com/images/no-profile-pic-icon/no-profile-pic-icon-11.jpg"
+                          className="h-10 w-10 rounded-full"
+                          src={AvatarUser}
                           alt=""
                         />
                       </Menu.Button>
+                      <div>
+                        <p className="text-xs font-medium text-white">{username}</p>
+                        <p className="text-xs font-medium text-gray-400">{role}</p>
+                      </div>
                     </div>
                     <Transition
                       as={Fragment}
@@ -70,31 +89,14 @@ export const Navbar = () => {
                       leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {/* <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Your Profile
-                            </a>
-                          )}
-                        </Menu.Item> */}
-
                         <Menu.Item>
                           {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
+                            <div
+                              className={`block px-4 py-2 text-sm text-gray-700 ${active && "bg-gray-100"}`}
+                              onClick={() => handleLogout()}
                             >
                               Sign out
-                            </a>
+                            </div>
                           )}
                         </Menu.Item>
                       </Menu.Items>
@@ -105,7 +107,6 @@ export const Navbar = () => {
               <div className="-mr-2 flex sm:hidden">
                 {/* Mobile menu button */}
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                  <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
                   ) : (
@@ -115,82 +116,38 @@ export const Navbar = () => {
               </div>
             </div>
           </div>
-
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-              <Disclosure.Button
-                as="a"
-                href="#"
-                className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-              >
-                Dashboard
-              </Disclosure.Button>
-              <Disclosure.Button
-                as="a"
-                href="#"
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-              >
-                Team
-              </Disclosure.Button>
-              <Disclosure.Button
-                as="a"
-                href="#"
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-              >
-                Projects
-              </Disclosure.Button>
-              <Disclosure.Button
-                as="a"
-                href="#"
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-              >
-                Calendar
-              </Disclosure.Button>
+              <NavLink to={"/"}>
+                <Disclosure.Button
+                  as="div"
+                  className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+                >
+                  Dashboard
+                </Disclosure.Button>
+              </NavLink>
             </div>
             <div className="border-t border-gray-700 pb-3 pt-4">
               <div className="flex items-center px-5">
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src={AvatarUser}
                     alt=""
                   />
                 </div>
                 <div className="ml-3">
                   <div className="text-base font-medium text-white">
-                    Tom Cook
+                    {username}
                   </div>
                   <div className="text-sm font-medium text-gray-400">
-                    tom@example.com
+                    {role}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
               </div>
               <div className="mt-3 space-y-1 px-2">
                 <Disclosure.Button
-                  as="a"
-                  href="#"
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  Your Profile
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="a"
-                  href="#"
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  Settings
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="a"
-                  href="#"
+                  onClick={() => handleLogout()}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   Sign out

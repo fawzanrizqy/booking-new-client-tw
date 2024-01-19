@@ -66,7 +66,6 @@ export const BookPage = () => {
             },
           }
         );
-        // console.log(data);
         setListBook(data.booking);
       } catch (err) {
         console.log(err);
@@ -79,7 +78,6 @@ export const BookPage = () => {
         });
       }
     };
-    // alert("masuk sini");
     fetchBook();
     setShowList(true);
   };
@@ -97,7 +95,7 @@ export const BookPage = () => {
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: `Tolong Lengkapi Semua Input`,
+          text: `Tolong lengkapi semua form input!`,
         });
         return;
       }
